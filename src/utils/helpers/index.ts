@@ -1,2 +1,3 @@
 import hexToRGBA from './colorUtils';
-export { hexToRGBA };
+import { formatNumber, isSvgImage, getStateFlagUrl } from './functions';
+export { hexToRGBA, formatNumber, isSvgImage, getStateFlagUrl };

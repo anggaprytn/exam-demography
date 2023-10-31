@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View, FlatList, ScrollView, Image } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { styles } from './styles';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { defaultColors } from '@/themes';
@@ -10,36 +10,15 @@ import IconFeather from 'react-native-vector-icons/Feather';
 import { dataFlag, dataStates } from '@/constants';
 import { SvgUri } from 'react-native-svg';
 import { FlashList } from '@shopify/flash-list';
-
-type FlagData = (string | number)[];
-type StateData = {
-  'ID State': string;
-  State: string;
-  'ID Year': number;
-  Year: string;
-  Population: number;
-  'Slug State': string;
-};
+import { Image } from 'expo-image';
+import { useNavigation } from '@react-navigation/core';
+import { formatNumber, isSvgImage, getStateFlagUrl } from '@/utils/helpers';
 
 const statusBarHeight = getStatusBarHeight();
 
-function isSvgImage(url: string): boolean {
-  return url.split('.').pop() === 'svg';
-}
-
-function getStateFlagUrl(
-  state: string,
-  stateData: StateData[],
-  flagData: FlagData[],
-): string | null {
-  const foundState = stateData.find(item => item.State === state);
-  if (!foundState) return null;
-
-  const foundFlag = flagData.find(item => item[0] === foundState.State);
-  return foundFlag ? (foundFlag[1] as string) : null;
-}
-
 const Home = () => {
+  const navigation: any = useNavigation();
+
   const renderTagline = useMemo(() => {
     return (
       <View style={{ width: wp(100), paddingHorizontal: 16, marginTop: 16 }}>
@@ -122,97 +101,92 @@ const Home = () => {
         <Text type="semibold" size={22} color={defaultColors.text}>
           All States
         </Text>
-        <Pressable>
+        <Pressable onPress={() => navigation.navigate('List')}>
           <Text type="regular" size={18} color={defaultColors.grayText}>
             see all
           </Text>
         </Pressable>
       </View>
     );
-  }, []);
+  }, [navigation]);
 
-  const renderItem = useCallback(({ item }: any) => {
-    const flagUrl = getStateFlagUrl(item?.State, dataStates, dataFlag);
-    const isSvg = isSvgImage(flagUrl || '');
-    return (
-      <Pressable
-        style={{
-          width: wp(100) - 32,
-          paddingHorizontal: 8 + 4,
-          paddingVertical: 8 + 4,
-          backgroundColor: 'white',
-          marginHorizontal: 16,
-          marginTop: 16,
-          borderRadius: 10,
-          flexDirection: 'row',
-          elevation: 2,
-        }}>
-        <View
+  const renderItem = useCallback(
+    ({ item }: any) => {
+      const flagUrl = getStateFlagUrl(item?.State, dataStates, dataFlag);
+      const isSvg = isSvgImage(flagUrl || '');
+      return (
+        <Pressable
+          onPress={() => navigation.navigate('Detail', { data: item })}
           style={{
-            height: 68,
-            width: 100,
-            borderRadius: 8,
-            overflow: 'hidden',
+            height: 68 + 24,
+            width: wp(100) - 32,
+            paddingHorizontal: 8 + 4,
+            paddingVertical: 8 + 4,
+            backgroundColor: 'white',
+            marginHorizontal: 16,
+            marginTop: 16,
+            borderRadius: 10,
+            flexDirection: 'row',
+            elevation: 2,
           }}>
-          {isSvg ? (
-            <SvgUri uri={flagUrl} width={'100%'} height={'100%'} />
-          ) : flagUrl ? (
-            <Image
-              source={{ uri: flagUrl }}
-              style={{
-                resizeMode: 'contain',
-                height: 68,
-                width: 100,
-                borderRadius: 8,
-              }}
-            />
-          ) : (
-            <View
-              style={{
-                backgroundColor: 'hotpink',
-                height: 68,
-                width: 100,
-                borderRadius: 8,
-              }}
-            />
-          )}
-        </View>
-        <View
-          style={{
-            // backgroundColor: 'skyblue',
-            height: 100 - 32,
-            width: wp(100) - 32 - 100 - 16 - 32,
-            marginLeft: 16,
-            borderRadius: 8,
-            justifyContent: 'center',
-          }}>
-          <Text
-            type="semibold"
-            size={21}
-            color={defaultColors.text}
-            numberOfLines={1}>
-            {item?.State}
-          </Text>
           <View
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginTop: 6,
+              height: 68,
+              width: 100,
+              borderRadius: 8,
+              overflow: 'hidden',
             }}>
-            <IconFeather
-              name={'users'}
-              size={18}
-              color={defaultColors.grayText}
-              style={{ marginRight: 4 }}
-            />
-            <Text type="regular" size={18} color={defaultColors.grayText}>
-              {item?.Population} Population
-            </Text>
+            {isSvg ? (
+              <SvgUri uri={flagUrl} width={'100%'} height={'100%'} />
+            ) : (
+              <Image
+                source={flagUrl}
+                contentFit="contain"
+                style={{
+                  height: 68,
+                  width: 100,
+                  borderRadius: 8,
+                }}
+              />
+            )}
           </View>
-        </View>
-      </Pressable>
-    );
-  }, []);
+          <View
+            style={{
+              height: 100 - 32,
+              width: wp(100) - 32 - 100 - 16 - 32,
+              marginLeft: 16,
+              borderRadius: 8,
+              justifyContent: 'center',
+            }}>
+            <Text
+              type="semibold"
+              size={21}
+              color={defaultColors.text}
+              numberOfLines={1}>
+              {item?.State}
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: 6,
+              }}>
+              <IconFeather
+                name={'users'}
+                size={18}
+                color={defaultColors.grayText}
+                style={{ marginRight: 4 }}
+              />
+              <Text type="regular" size={17} color={defaultColors.grayText}>
+                {formatNumber(item?.Population)} Population
+              </Text>
+            </View>
+          </View>
+        </Pressable>
+      );
+    },
+    [navigation],
+  );
 
   const renderFooter = useCallback(() => {
     return <View style={{ height: 16 }} />;
@@ -220,7 +194,8 @@ const Home = () => {
 
   const renderList = useMemo(() => {
     return (
-      <FlatList
+      <FlashList
+        estimatedItemSize={100}
         data={dataStates}
         renderItem={renderItem}
         keyExtractor={(_, idx: number) => idx.toString()}

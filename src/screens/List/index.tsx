@@ -3,8 +3,7 @@ import { View } from 'react-native';
 import { styles } from './styles';
 import React from 'react';
 
-const Home = () => {
-
+const List = () => {
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
@@ -12,4 +11,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default List;

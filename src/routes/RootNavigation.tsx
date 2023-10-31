@@ -10,7 +10,7 @@ import List from '@/screens/List';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-const UnauthenticatedStack = () => {
+const ScreenStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -39,7 +39,7 @@ const UnauthenticatedStack = () => {
 };
 
 const RootNavigator = () => {
-  return <UnauthenticatedStack />;
+  return <ScreenStack />;
 };
 
 export default RootNavigator;
