@@ -3,7 +3,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList } from './_types';
 import { fadeTransition } from './transitions';
 
-//Unauthenticated Stack
 import Home from '@/screens/Home';
 import Detail from '@/screens/Detail';
 import List from '@/screens/List';
