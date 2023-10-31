@@ -11,7 +11,7 @@ export const defaultColors: ColorScheme = {
   secondaryText: '#494B4A',
   textTitleLabel: '#343A40',
   screenBackground: '#F9F9F9',
-  grayBackground: '#F1F2F6',
+  grayBackground: '#FCFCFC',
   buttonDisableBg: '#E9ECEF',
   buttonDisableText: '#ADB5BD',
   buttonEnableBg: '#1D4ED8',

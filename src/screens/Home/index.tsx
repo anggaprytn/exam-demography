@@ -13,6 +13,7 @@ import { FlashList } from '@shopify/flash-list';
 import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/core';
 import { formatNumber, isSvgImage, getStateFlagUrl } from '@/utils/helpers';
+import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const statusBarHeight = getStatusBarHeight();
 
@@ -36,17 +37,29 @@ const Home = () => {
   const renderSearchBar = useMemo(() => {
     return (
       <Pressable
+        onPress={() => navigation.navigate('List')}
         style={{
           width: wp(100) - 32,
-          backgroundColor: 'pink',
-          height: 50,
+          backgroundColor: '#EFE7F6',
+          height: 55,
           marginHorizontal: 16,
           marginTop: 16,
-          borderRadius: 10,
-        }}
-      />
+          borderRadius: 55 / 2,
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+        <IconMaterialIcons
+          name="search"
+          size={24}
+          color={'#4B464D'}
+          style={{ marginHorizontal: 16 }}
+        />
+        <Text type="regular" size={19} color={defaultColors.text}>
+          Search here...
+        </Text>
+      </Pressable>
     );
-  }, []);
+  }, [navigation]);
 
   const renderCard = useMemo(() => {
     return (

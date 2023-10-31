@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { defaultColors } from '@/themes';
 
 const statusBarHeight = getStatusBarHeight();
 

@@ -125,12 +125,37 @@ const List = () => {
           flex: 1,
           marginTop: statusBarHeight,
         }}>
-        <Searchbar
-          style={{ marginHorizontal: 16, marginVertical: 16 }}
-          placeholder="Search here"
-          onChangeText={onChangeSearch}
-          value={searchQuery}
-        />
+        <View
+          style={{
+            paddingVertical: 16,
+            flexDirection: 'row',
+            paddingHorizontal: 16,
+            justifyContent: 'space-between',
+          }}>
+          <View
+            style={{
+              height: 55,
+              width: 55,
+              backgroundColor: defaultColors.white,
+              borderRadius: 10,
+              justifyContent: 'center',
+              alignItems: 'center',
+              elevation: 2,
+            }}>
+            <IconFeather
+              name="chevron-left"
+              size={35}
+              style={{ right: 2 }}
+              color={defaultColors.grayText}
+            />
+          </View>
+          <Searchbar
+            style={{ width: wp(100) - 32 - 55 - 8 }}
+            placeholder="Search here..."
+            onChangeText={onChangeSearch}
+            value={searchQuery}
+          />
+        </View>
         {renderList}
       </View>
     </View>
