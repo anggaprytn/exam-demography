@@ -46,6 +46,15 @@ export const formatNumberData = (num: number): string => {
 };
 
 export const calculateStateMetrics = (data: StateData[]) => {
+  if (data.length === 0) {
+    return {
+      totalStates: 0,
+      totalPopulation: 0,
+      medianPopulation: 0,
+      avgPopulation: 0,
+    };
+  }
+
   const totalStates = data.length;
   const totalPopulation = data.reduce((acc, curr) => acc + curr.Population, 0);
 

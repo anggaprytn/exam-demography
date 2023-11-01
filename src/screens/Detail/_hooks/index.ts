@@ -6,7 +6,8 @@ import {
   getStateFlagUrl,
   getGeometryByName,
 } from '@/utils/helpers';
-import { dataFlag, dataStates, us_states } from '@/constants';
+import { dataFlag, us_states } from '@/constants';
+import { useSelector } from 'react-redux';
 
 const initialRegion = {
   latitude: 40.758896,
@@ -39,6 +40,8 @@ const flattenCoordinates = (geometry: { type: string; coordinates: any }) => {
 };
 
 export const useMap = () => {
+  const dataStates = useSelector(({ dataSlice }: any) => dataSlice.dataStates);
+
   const navigation: any = useNavigation();
   const mapViewRef: any = useRef<MapView>(null);
 

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useFocusEffect, useNavigation } from '@react-navigation/core';
-import { dataStates } from '@/constants';
 import { useRoute } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 type StateData = {
   'ID State': string;
@@ -14,18 +14,20 @@ type StateData = {
 
 type SearchCriteria = 'ID State' | 'State' | 'Slug State';
 
-function searchState(
-  query: string,
-  criteria: SearchCriteria = 'State',
-): Array<StateData> {
-  return dataStates.filter(state =>
-    state[criteria].toLowerCase().includes(query.toLowerCase()),
-  );
-}
-
 export const useList = () => {
   const navigation: any = useNavigation();
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const dataStates = useSelector(({ dataSlice }: any) => dataSlice.dataStates);
+
+  function searchState(
+    query: string,
+    criteria: SearchCriteria = 'State',
+  ): Array<StateData> {
+    return dataStates.filter(state =>
+      state[criteria].toLowerCase().includes(query.toLowerCase()),
+    );
+  }
 
   const route = useRoute<any>();
 
@@ -51,5 +53,6 @@ export const useList = () => {
     navigation,
     searchRef,
     searchQuery,
+    dataStates,
   };
 };

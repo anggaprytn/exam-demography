@@ -26,10 +26,17 @@
         "googleMaps": {
           "apiKey": "AIzaSyAE028EVfQBXcXexwXFupAX7Atx_7LyjEw"
         }
-      }
+      },
+      "package": "com.anggaprytn.demography"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "798a772a-3fa2-4743-a413-c867cdb21b64"
+      }
+    },
+    "owner": "anggaprytn"
   }
 }

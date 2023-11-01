@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { styles } from './styles';
 import { Searchbar } from 'react-native-paper';
 import { FlashList } from '@shopify/flash-list';
-import { dataFlag, dataStates } from '@/constants';
+import { dataFlag } from '@/constants';
 import { formatNumber, isSvgImage, getStateFlagUrl } from '@/utils/helpers';
 import { Pressable, Text } from '@/components';
 import { Image } from 'expo-image';
@@ -14,8 +14,14 @@ import { defaultColors } from '@/themes';
 import { useList } from './hooks';
 
 const List = () => {
-  const { searchQuery, onChangeSearch, results, navigation, searchRef } =
-    useList();
+  const {
+    searchQuery,
+    onChangeSearch,
+    results,
+    navigation,
+    searchRef,
+    dataStates,
+  } = useList();
 
   const renderItem = useCallback(
     ({ item }: any) => {
@@ -55,7 +61,7 @@ const List = () => {
         </Pressable>
       );
     },
-    [navigation],
+    [dataStates, navigation],
   );
 
   const renderFooter = useCallback(() => {
@@ -72,7 +78,7 @@ const List = () => {
         ListFooterComponent={renderFooter}
       />
     );
-  }, [renderFooter, renderItem, results, searchQuery]);
+  }, [dataStates, renderFooter, renderItem, results, searchQuery]);
 
   const renderBackButton = useMemo(() => {
     return (

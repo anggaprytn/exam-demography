@@ -5,7 +5,7 @@ import { styles } from './styles';
 import { defaultColors } from '@/themes';
 import { Text, Pressable } from '@/components';
 import IconFeather from 'react-native-vector-icons/Feather';
-import { dataFlag, dataStates } from '@/constants';
+import { dataFlag } from '@/constants';
 import { SvgUri } from 'react-native-svg';
 import { FlashList } from '@shopify/flash-list';
 import { Image } from 'expo-image';
@@ -19,7 +19,7 @@ import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useHome } from './_hooks';
 
 const Home = () => {
-  const { dataCard, navigation } = useHome();
+  const { dataCard, navigation, dataStates } = useHome();
 
   const renderTagline = useMemo(() => {
     return (
@@ -143,7 +143,7 @@ const Home = () => {
         </Pressable>
       );
     },
-    [navigation],
+    [dataStates, navigation],
   );
 
   const renderFooter = useCallback(() => {
@@ -160,7 +160,7 @@ const Home = () => {
         ListFooterComponent={renderFooter}
       />
     );
-  }, [renderFooter, renderItem]);
+  }, [dataStates, renderFooter, renderItem]);
 
   return (
     <View style={styles.container}>
