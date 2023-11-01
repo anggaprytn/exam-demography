@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, FlatList } from 'react-native';
 import { styles } from './styles';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { defaultColors } from '@/themes';
@@ -12,10 +12,95 @@ import { SvgUri } from 'react-native-svg';
 import { FlashList } from '@shopify/flash-list';
 import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/core';
-import { formatNumber, isSvgImage, getStateFlagUrl } from '@/utils/helpers';
+import {
+  formatNumber,
+  isSvgImage,
+  getStateFlagUrl,
+  hexToRGBA,
+} from '@/utils/helpers';
 import IconMaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import IconIonicons from 'react-native-vector-icons/Ionicons';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
 
 const statusBarHeight = getStatusBarHeight();
+
+const calculateStateMetrics = (data: StateData[]) => {
+  const totalStates = data.length;
+  const totalPopulation = data.reduce((acc, curr) => acc + curr.Population, 0);
+
+  const sortedPopulations = data
+    .map(item => item.Population)
+    .sort((a, b) => a - b);
+  const mid = Math.floor(sortedPopulations.length / 2);
+
+  const medianPopulation =
+    sortedPopulations.length % 2 !== 0
+      ? sortedPopulations[mid]
+      : (sortedPopulations[mid - 1] + sortedPopulations[mid]) / 2;
+
+  const avgPopulation = totalPopulation / totalStates;
+
+  return {
+    totalStates,
+    totalPopulation,
+    medianPopulation,
+    avgPopulation,
+  };
+};
+
+const result = calculateStateMetrics(dataStates);
+
+const formatNumberData = (num: number): string => {
+  if (num >= 1_000_000_000_000) {
+    return (num / 1_000_000_000_000).toFixed(1) + 'T';
+  }
+  if (num >= 1_000_000_000) {
+    return (num / 1_000_000_000).toFixed(1) + 'B';
+  }
+  if (num >= 1_000_000) {
+    return (num / 1_000_000).toFixed(1) + 'M';
+  }
+  if (num >= 1_000) {
+    return (num / 1_000).toFixed(1) + 'K';
+  }
+  return num.toString();
+};
+
+const dataCard = [
+  {
+    name: 'Total States',
+    value: result?.totalStates,
+    color: '#4CAF50',
+    icon: <IconIonicons name="map-outline" size={24} color={'#4CAF50'} />,
+  },
+  {
+    name: 'Total Population',
+    value: formatNumberData(result?.totalPopulation),
+    color: '#FF9800',
+    icon: <IconFeather name={'users'} size={24} color={'#FF9800'} />,
+  },
+  {
+    name: 'Median Population',
+    value: formatNumberData(result?.medianPopulation),
+    color: '#2196F3',
+    icon: <IconAntDesign name="barschart" size={24} color={'#2196F3'} />,
+  },
+  {
+    name: 'Avg. Population',
+    value: formatNumberData(result?.avgPopulation),
+    color: '#9C27B0',
+    icon: <IconAntDesign name="linechart" size={24} color={'#9C27B0'} />,
+  },
+];
+
+type StateData = {
+  'ID State': string;
+  State: string;
+  'ID Year': number;
+  Year: string;
+  Population: number;
+  'Slug State': string;
+};
 
 const Home = () => {
   const navigation: any = useNavigation();
@@ -61,44 +146,66 @@ const Home = () => {
     );
   }, [navigation]);
 
+  const renderItemData = useCallback(({ item }: any) => {
+    return (
+      <View
+        style={{
+          width: wp(50) - 32,
+          paddingVertical: 16,
+          flexDirection: 'row',
+          alignItems: 'center',
+          marginLeft: 16,
+          justifyContent: 'space-between',
+        }}>
+        <View
+          style={{
+            height: 40,
+            width: 40,
+            backgroundColor: hexToRGBA(item.color, 0.2),
+            borderRadius: 40 / 2,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          {item.icon}
+        </View>
+        <View
+          style={{
+            marginLeft: 12,
+            width: wp(50) - 40 - 32 - 12,
+          }}>
+          <Text type="semibold" size={20} color={defaultColors.text}>
+            {item.value}
+          </Text>
+          <Text type="regular" size={15} color={defaultColors.grayText}>
+            {item.name}
+          </Text>
+        </View>
+      </View>
+    );
+  }, []);
+
   const renderCard = useMemo(() => {
     return (
       <>
-        <Pressable
+        <View
           style={{
+            elevation: 2,
+            backgroundColor: defaultColors.white,
             width: wp(100) - 32,
-            backgroundColor: 'pink',
-            height: 100,
             marginHorizontal: 16,
             marginTop: 16,
             borderRadius: 10,
-          }}></Pressable>
-        <Pressable
-          style={{
-            width: wp(100) - 32,
-            marginHorizontal: 16,
-            marginTop: 16,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
+            overflow: 'hidden',
           }}>
-          <Pressable
-            style={{
-              width: wp(50) - 16 - 8,
-              backgroundColor: 'orange',
-              height: 100,
-              borderRadius: 10,
-            }}></Pressable>
-          <Pressable
-            style={{
-              width: wp(50) - 16 - 8,
-              backgroundColor: 'orange',
-              height: 100,
-              borderRadius: 10,
-            }}></Pressable>
-        </Pressable>
+          <FlatList
+            data={dataCard}
+            renderItem={renderItemData}
+            numColumns={2}
+          />
+        </View>
       </>
     );
-  }, []);
+  }, [renderItemData]);
 
   const renderText = useMemo(() => {
     return (
