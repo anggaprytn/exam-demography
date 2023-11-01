@@ -1,10 +1,8 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import { styles } from './styles';
 import { Searchbar } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/core';
-import { getStatusBarHeight } from 'react-native-status-bar-height';
 import { FlashList } from '@shopify/flash-list';
 import { dataFlag, dataStates } from '@/constants';
 import { formatNumber, isSvgImage, getStateFlagUrl } from '@/utils/helpers';
@@ -13,16 +11,11 @@ import { Image } from 'expo-image';
 import { SvgUri } from 'react-native-svg';
 import IconFeather from 'react-native-vector-icons/Feather';
 import { defaultColors } from '@/themes';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
-
-const statusBarHeight = getStatusBarHeight();
+import { useList } from './hooks';
 
 const List = () => {
-  const navigation: any = useNavigation();
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const onChangeSearch = (query: React.SetStateAction<string>) =>
-    setSearchQuery(query);
+  const { searchQuery, onChangeSearch, results, navigation, searchRef } =
+    useList();
 
   const renderItem = useCallback(
     ({ item }: any) => {
@@ -31,47 +24,15 @@ const List = () => {
       return (
         <Pressable
           onPress={() => navigation.navigate('Detail', { data: item })}
-          style={{
-            height: 68 + 24,
-            width: wp(100) - 32,
-            paddingHorizontal: 8 + 4,
-            paddingVertical: 8 + 4,
-            backgroundColor: 'white',
-            marginHorizontal: 16,
-            marginTop: 16,
-            borderRadius: 10,
-            flexDirection: 'row',
-            elevation: 2,
-          }}>
-          <View
-            style={{
-              height: 68,
-              width: 100,
-              borderRadius: 8,
-              overflow: 'hidden',
-            }}>
+          style={styles.card}>
+          <View style={styles.img}>
             {isSvg ? (
               <SvgUri uri={flagUrl} width={'100%'} height={'100%'} />
             ) : (
-              <Image
-                source={flagUrl}
-                contentFit="contain"
-                style={{
-                  height: 68,
-                  width: 100,
-                  borderRadius: 8,
-                }}
-              />
+              <Image source={flagUrl} contentFit="contain" style={styles.img} />
             )}
           </View>
-          <View
-            style={{
-              height: 100 - 32,
-              width: wp(100) - 32 - 100 - 16 - 32,
-              marginLeft: 16,
-              borderRadius: 8,
-              justifyContent: 'center',
-            }}>
+          <View style={styles.infoState}>
             <Text
               type="semibold"
               size={21}
@@ -79,17 +40,12 @@ const List = () => {
               numberOfLines={1}>
               {item?.State}
             </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginTop: 6,
-              }}>
+            <View style={styles.population}>
               <IconFeather
                 name={'users'}
                 size={18}
                 color={defaultColors.grayText}
-                style={{ marginRight: 4 }}
+                style={styles.mr4}
               />
               <Text type="regular" size={17} color={defaultColors.grayText}>
                 {formatNumber(item?.Population)} Population
@@ -103,67 +59,54 @@ const List = () => {
   );
 
   const renderFooter = useCallback(() => {
-    return <View style={{ height: 16 }} />;
+    return <View style={styles.h16} />;
   }, []);
 
   const renderList = useMemo(() => {
     return (
       <FlashList
         estimatedItemSize={100}
-        data={dataStates}
+        data={searchQuery !== '' ? results : dataStates}
         renderItem={renderItem}
         keyExtractor={(_, idx: number) => idx.toString()}
         ListFooterComponent={renderFooter}
       />
     );
-  }, [renderFooter, renderItem]);
+  }, [renderFooter, renderItem, results, searchQuery]);
 
   const renderBackButton = useMemo(() => {
     return (
-      <Pressable
-        onPress={() => navigation.goBack()}
-        style={{
-          height: 55,
-          width: 55,
-          backgroundColor: defaultColors.white,
-          borderRadius: 10,
-          justifyContent: 'center',
-          alignItems: 'center',
-          elevation: 2,
-        }}>
+      <Pressable onPress={() => navigation.goBack()} style={styles.back}>
         <IconFeather
           name="chevron-left"
           size={35}
-          style={{ right: 2 }}
+          style={styles.r2}
           color={defaultColors.grayText}
         />
       </Pressable>
     );
   }, [navigation]);
 
+  const renderHeader = useMemo(() => {
+    return (
+      <View style={styles.header}>
+        {renderBackButton}
+        <Searchbar
+          ref={searchRef}
+          style={styles.searchBar}
+          placeholder="Search here..."
+          onChangeText={onChangeSearch}
+          value={searchQuery}
+        />
+      </View>
+    );
+  }, [onChangeSearch, renderBackButton, searchQuery, searchRef]);
+
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
-      <View
-        style={{
-          flex: 1,
-          marginTop: statusBarHeight,
-        }}>
-        <View
-          style={{
-            paddingVertical: 16,
-            flexDirection: 'row',
-            paddingHorizontal: 16,
-            justifyContent: 'space-between',
-          }}>
-          {renderBackButton}
-          <Searchbar
-            style={{ width: wp(100) - 32 - 55 - 8 }}
-            placeholder="Search here..."
-            onChangeText={onChangeSearch}
-            value={searchQuery}
-          />
-        </View>
+      <View style={styles.content}>
+        {renderHeader}
         {renderList}
       </View>
     </View>

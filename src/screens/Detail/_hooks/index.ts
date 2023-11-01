@@ -1,9 +1,16 @@
 import { useRef } from 'react';
 import MapView from 'react-native-maps';
+import { useNavigation, useRoute } from '@react-navigation/core';
+import {
+  isSvgImage,
+  getStateFlagUrl,
+  getGeometryByName,
+} from '@/utils/helpers';
+import { dataFlag, dataStates, us_states } from '@/constants';
 
 const initialRegion = {
-  latitude: -6.1753924,
-  longitude: 106.8271528,
+  latitude: 40.758896,
+  longitude: -73.98513,
   latitudeDelta: 0.0025,
   longitudeDelta: 0.0025,
 };
@@ -32,7 +39,18 @@ const flattenCoordinates = (geometry: { type: string; coordinates: any }) => {
 };
 
 export const useMap = () => {
+  const navigation: any = useNavigation();
   const mapViewRef: any = useRef<MapView>(null);
+
+  const route = useRoute<any>();
+
+  const data = route.params?.data;
+
+  const flagUrl = getStateFlagUrl(data?.State, dataStates, dataFlag);
+
+  const isSvg = isSvgImage(flagUrl || '');
+
+  const polygonGeometry: any = getGeometryByName(us_states, data?.State);
 
   const animateToCoords = (geometry: { type: string; coordinates: any }) => {
     const flatCoords = flattenCoordinates(geometry);
@@ -47,5 +65,10 @@ export const useMap = () => {
     mapViewRef,
     initialRegion,
     animateToCoords,
+    navigation,
+    isSvg,
+    polygonGeometry,
+    data,
+    flagUrl,
   };
 };
