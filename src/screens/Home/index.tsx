@@ -71,13 +71,13 @@ const dataCard = [
     name: 'Total States',
     value: result?.totalStates,
     color: '#4CAF50',
-    icon: <IconIonicons name="map-outline" size={24} color={'#4CAF50'} />,
+    icon: <IconIonicons name="map-outline" size={22} color={'#4CAF50'} />,
   },
   {
     name: 'Total Population',
     value: formatNumberData(result?.totalPopulation),
     color: '#FF9800',
-    icon: <IconFeather name={'users'} size={24} color={'#FF9800'} />,
+    icon: <IconFeather name={'users'} size={21} color={'#FF9800'} />,
   },
   {
     name: 'Median Population',
@@ -89,7 +89,7 @@ const dataCard = [
     name: 'Avg. Population',
     value: formatNumberData(result?.avgPopulation),
     color: '#9C27B0',
-    icon: <IconAntDesign name="linechart" size={24} color={'#9C27B0'} />,
+    icon: <IconAntDesign name="linechart" size={21} color={'#9C27B0'} />,
   },
 ];
 
@@ -151,7 +151,7 @@ const Home = () => {
       <View
         style={{
           width: wp(50) - 32,
-          paddingVertical: 16,
+          paddingTop: 16 + 8,
           flexDirection: 'row',
           alignItems: 'center',
           marginLeft: 16,
@@ -161,7 +161,7 @@ const Home = () => {
           style={{
             height: 40,
             width: 40,
-            backgroundColor: hexToRGBA(item.color, 0.2),
+            backgroundColor: hexToRGBA(item.color, 0.15),
             borderRadius: 40 / 2,
             justifyContent: 'center',
             alignItems: 'center',
@@ -186,24 +186,19 @@ const Home = () => {
 
   const renderCard = useMemo(() => {
     return (
-      <>
-        <View
-          style={{
-            elevation: 2,
-            backgroundColor: defaultColors.white,
-            width: wp(100) - 32,
-            marginHorizontal: 16,
-            marginTop: 16,
-            borderRadius: 10,
-            overflow: 'hidden',
-          }}>
-          <FlatList
-            data={dataCard}
-            renderItem={renderItemData}
-            numColumns={2}
-          />
-        </View>
-      </>
+      <Pressable
+        style={{
+          elevation: 2,
+          backgroundColor: defaultColors.white,
+          width: wp(100) - 32,
+          marginHorizontal: 16,
+          marginTop: 16,
+          borderRadius: 10,
+          overflow: 'hidden',
+          paddingBottom: 16 + 8,
+        }}>
+        <FlatList data={dataCard} renderItem={renderItemData} numColumns={2} />
+      </Pressable>
     );
   }, [renderItemData]);
 

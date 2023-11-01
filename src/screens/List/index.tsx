@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 import { styles } from './styles';
 import { Searchbar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/core';
@@ -21,7 +21,8 @@ const List = () => {
   const navigation: any = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const onChangeSearch = query => setSearchQuery(query);
+  const onChangeSearch = (query: React.SetStateAction<string>) =>
+    setSearchQuery(query);
 
   const renderItem = useCallback(
     ({ item }: any) => {
@@ -117,6 +118,29 @@ const List = () => {
     );
   }, [renderFooter, renderItem]);
 
+  const renderBackButton = useMemo(() => {
+    return (
+      <Pressable
+        onPress={() => navigation.goBack()}
+        style={{
+          height: 55,
+          width: 55,
+          backgroundColor: defaultColors.white,
+          borderRadius: 10,
+          justifyContent: 'center',
+          alignItems: 'center',
+          elevation: 2,
+        }}>
+        <IconFeather
+          name="chevron-left"
+          size={35}
+          style={{ right: 2 }}
+          color={defaultColors.grayText}
+        />
+      </Pressable>
+    );
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
@@ -132,23 +156,7 @@ const List = () => {
             paddingHorizontal: 16,
             justifyContent: 'space-between',
           }}>
-          <View
-            style={{
-              height: 55,
-              width: 55,
-              backgroundColor: defaultColors.white,
-              borderRadius: 10,
-              justifyContent: 'center',
-              alignItems: 'center',
-              elevation: 2,
-            }}>
-            <IconFeather
-              name="chevron-left"
-              size={35}
-              style={{ right: 2 }}
-              color={defaultColors.grayText}
-            />
-          </View>
+          {renderBackButton}
           <Searchbar
             style={{ width: wp(100) - 32 - 55 - 8 }}
             placeholder="Search here..."

@@ -1,3 +1,3 @@
-import { theme, settings, dataStates, dataFlag } from './data';
+import { theme, settings, dataStates, dataFlag, us_states } from './data';
 
-export { theme, settings, dataStates, dataFlag };
+export { theme, settings, dataStates, dataFlag, us_states };

@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { View } from 'react-native';
 import { styles } from './styles';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Polyline } from 'react-native-maps';
 import { useMap } from './_hooks';
 import { StatusBar } from 'expo-status-bar';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
@@ -10,15 +10,45 @@ import IconFeather from 'react-native-vector-icons/Feather';
 import { Pressable, Text } from '@/components';
 import { useNavigation, useRoute } from '@react-navigation/core';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
-import { formatNumber, isSvgImage, getStateFlagUrl } from '@/utils/helpers';
-import { dataFlag, dataStates } from '@/constants';
+import {
+  formatNumber,
+  isSvgImage,
+  getStateFlagUrl,
+  hexToRGBA,
+} from '@/utils/helpers';
+import { dataFlag, dataStates, us_states } from '@/constants';
 import { SvgUri } from 'react-native-svg';
 import { Image } from 'expo-image';
 
 const statusBarHeight = getStatusBarHeight();
 
+type Feature = {
+  type: string;
+  id: string;
+  properties: {
+    name: string;
+  };
+  geometry: object;
+};
+
+type FeatureCollection = {
+  type: string;
+  features: Feature[];
+};
+
+function getGeometryByName(
+  collection: FeatureCollection,
+  name: string,
+): object | null {
+  const feature = collection.features.find(
+    data => data.properties.name === name,
+  );
+
+  return feature ? feature.geometry : null;
+}
+
 const Detail = () => {
-  const { mapViewRef, initialRegion } = useMap();
+  const { mapViewRef, initialRegion, animateToCoords } = useMap();
 
   const navigation: any = useNavigation();
 
@@ -28,6 +58,40 @@ const Detail = () => {
 
   const flagUrl = getStateFlagUrl(data?.State, dataStates, dataFlag);
   const isSvg = isSvgImage(flagUrl || '');
+
+  const polygonGeometry: any = getGeometryByName(us_states, data?.State);
+
+  useEffect(() => {
+    if (polygonGeometry) {
+      setTimeout(() => {
+        animateToCoords(polygonGeometry);
+      }, 500);
+    }
+  }, [animateToCoords, polygonGeometry]);
+
+  const renderPolyline = (coordinates: number[][][]) => {
+    return coordinates.map((ring, index) => (
+      <Polyline
+        key={index}
+        coordinates={ring.map(([longitude, latitude]) => ({
+          latitude,
+          longitude,
+        }))}
+        fillColor={hexToRGBA(defaultColors.primary, 0.2)}
+        strokeColor={defaultColors.primary}
+        strokeWidth={2}
+      />
+    ));
+  };
+
+  const renderGeometry = (geometry_: { type: string; coordinates: any }) => {
+    if (geometry_.type === 'Polygon') {
+      return renderPolyline(geometry_.coordinates);
+    } else if (geometry_.type === 'MultiPolygon') {
+      return geometry_.coordinates.flatMap(polygon => renderPolyline(polygon));
+    }
+    return null;
+  };
 
   const renderBackButton = useMemo(() => {
     return (
@@ -135,8 +199,9 @@ const Detail = () => {
         ref={mapViewRef}
         provider={PROVIDER_GOOGLE}
         initialRegion={initialRegion}
-        style={styles.container}
-      />
+        style={styles.container}>
+        {polygonGeometry && renderGeometry(polygonGeometry)}
+      </MapView>
       {renderBackButton}
       {renderCard}
     </View>
