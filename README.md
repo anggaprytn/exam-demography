@@ -4,7 +4,7 @@
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg?style=for-the-badge)](https://github.com/prettier/prettier)
 
 
-This React Native app is developed as part of the mobile programming course at Binus University. It provides insights into the population and geographical maps of the United States, along with a detailed list of its states.
+This React Native app is developed as part of the mobile programming course at [Binus University](https://binus.ac.id/). It provides insights into the population and geographical maps of the United States, along with a detailed list of its states.
 
 The application showcases the use of React Native to deliver a cross-platform experience suitable for both Android and iOS platforms.
 
