@@ -1,7 +1,7 @@
 import { ColorScheme } from './_types/';
 
 export const defaultColors: ColorScheme = {
-  primary: 'rgb(52, 95, 181)',
+  primary: '#345fb5',
   secondary: '#00A388',
   success: '#04944F',
   pending: '#f48c06',

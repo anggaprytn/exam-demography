@@ -92,8 +92,13 @@ const Home = () => {
           All States
         </Text>
         <Pressable
-          onPress={() => navigation.navigate('List', { isSearch: false })}>
-          <Text type="regular" size={18} color={defaultColors.grayText}>
+          onPress={() => navigation.navigate('List', { isSearch: false })}
+          style={styles.seeall}>
+          <Text
+            type="medium"
+            size={18}
+            color={defaultColors.primary}
+            style={styles.mt1}>
             see all
           </Text>
         </Pressable>
